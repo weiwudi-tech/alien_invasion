@@ -1,9 +1,12 @@
 import pygame.font
+from pygame.sprite import Group
+from ship import Ship
 from pathlib import Path
 import json
 
 class ScoreBoard:
     def __init__(self,ai_game):
+        self.ai_game=ai_game
         self.screen=ai_game.screen
         self.screen_rect=self.screen.get_rect()
         self.settings=ai_game.settings
@@ -11,10 +14,12 @@ class ScoreBoard:
         #显示得分时字体设置
         self.text_color=(30,30,30)
         self.font=pygame.font.SysFont(None,48)
-        #准备初始化得分图像
+        #初始化得分图像
         self.prep_score()
         #
         self.prep_high_score()
+        #飞船图像
+        self.prep_ships()
 
     def prep_high_score(self):
         #三位打个逗号
@@ -34,9 +39,20 @@ class ScoreBoard:
         self.score_rect.right=self.screen_rect.right
         self.score_rect.top=0
 
+    def prep_ships(self):
+        self.ships=Group()
+        for ship_number in range(self.stats.ship_left): 
+            ship=Ship(self.ai_game)
+            ship.rect.x=500+ship_number*ship.rect.width
+            ship.rect.y=0
+            self.ships.add(ship)
+
+    
+
     def show_score(self):
         self.screen.blit(self.score_image,self.score_rect)
         self.screen.blit(self.high_score_image,self.high_score_rect)
+        self.ships.draw(self.screen)#画飞船
         path=Path("high_score.json")#将历史最高分存入json
         A={"high_score":self.stats.high_score}
         path.write_text(json.dumps(A))

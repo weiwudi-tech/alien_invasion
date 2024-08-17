@@ -1,7 +1,9 @@
 import pygame
+from pygame.sprite import Sprite
 
-class Ship:
+class Ship(Sprite):
     def __init__(self,ai_game):
+        super().__init__()
         #初始化飞船与设置初始位置
         self.screen=ai_game.screen#访问屏幕
         self.screen_rect=ai_game.screen.get_rect()#访问屏幕作为矩形的属性，用于确定飞船放置位置

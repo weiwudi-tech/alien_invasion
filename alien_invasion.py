@@ -51,8 +51,12 @@ class AlienInvasion:
     def _check_play_button1(self,mouse_pos):
         button_clicked=self.play_button1.rect.collidepoint(mouse_pos)
         if button_clicked and not self.active:
+            nggyu=pygame.mixer.Sound(os.path.join("voice/NGGYU.mp3"))
+            nggyu.set_volume(0.5)
+            nggyu.play()
             self.states.reset_stats()#重新计分
             self.score_board.prep_score()#显示计分板
+            self.score_board.prep_ships()#显示飞船
             self.active=True
             #清空外星人
             self.alien1s.empty()
@@ -79,6 +83,8 @@ class AlienInvasion:
         #如果有子弹击中外星人1
         collisions=pygame.sprite.groupcollide(self.bullets,self.alien1s,self.act,True)
         if collisions:
+            hit=pygame.mixer.Sound(os.path.join("voice/村民.mp3"))
+            hit.play()
             self.states.score+=self.settings.alien_score
             self.score_board.prep_score()#更新屏幕
             self.score_board._check_high_score()
@@ -112,6 +118,7 @@ class AlienInvasion:
     def _ship_hit(self):
         if self.states.ship_left>1:
             self.states.ship_left-=1
+            self.score_board.prep_ships()
             print(f"飞船还有{self.states.ship_left}命")
             #清空外星人列表
             self.alien1s.empty()
@@ -119,21 +126,24 @@ class AlienInvasion:
             self.ship.center_ship()
             #暂停一会
             ruo=pygame.mixer.Sound(os.path.join("voice/弱耶.mp3"))
-            sila=pygame.mixer.Sound(os.path.join("voice/死啦.mp3"))
+            haide=pygame.mixer.Sound(os.path.join("voice/害得.mp3"))
             meihui=pygame.mixer.Sound(os.path.join("voice/每回.mp3"))
             if random.choice(A)==1:
                 ruo.set_volume(2)
                 ruo.play()
                 time.sleep(3)
             elif random.choice(A)==0:
-                sila.set_volume(2)
-                sila.play()
+                haide.set_volume(2)
+                haide.play()
                 time.sleep(2)
             else:
                 meihui.set_volume(2)
                 meihui.play()
                 time.sleep(2)
         else:
+            sila=pygame.mixer.Sound(os.path.join("voice/死啦.mp3"))
+            sila.set_volume(2)
+            sila.play()
             self.active=False
              
     def _check_keydown_events(self,event):#按下
@@ -147,8 +157,8 @@ class AlienInvasion:
             self.ship.moving_down=True
         if event.key==pygame.K_j:
             self._fire_bullet()
-            woo=pygame.mixer.Sound(os.path.join("voice/Woo.mp3"))
-            woo.play()
+            biu=pygame.mixer.Sound(os.path.join("voice/biu.mp3"))
+            biu.play()
             self.ship.image=pygame.image.load("image/state(2).png")
         if event.key==pygame.K_ESCAPE:
             sys.exit()
@@ -237,9 +247,6 @@ class AlienInvasion:
 
 #开始游戏
     def run_game(self):#开始游戏循环
-        nggyu=pygame.mixer.Sound(os.path.join("voice/NGGYU.mp3"))
-        nggyu.set_volume(0.5)
-        nggyu.play()
         while True:
             self._check_events()#相应按键与鼠标事件
             if self.active:
